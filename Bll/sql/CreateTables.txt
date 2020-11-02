@@ -1,0 +1,27 @@
+﻿CREATE TABLE employees
+(
+    Id INT PRIMARY KEY Identity,
+    Name NVARCHAR(20),
+    Position NVARCHAR(20),
+)
+
+CREATE TABLE Interviews
+(
+    Id INT PRIMARY KEY Identity,
+    ExecutorId INT NOT NULL REFERENCES Applicants (Id),
+    Received DateTime2 NOT NULL,
+    ExamenotorId INT NOT NULL REFERENCES employees (Id),
+    Status INT,
+    Rating INT,
+    PositionFor NVARCHAR(40) NOT NULL,
+    Exercise NVARCHAR(40),
+        InterviewerId INT REFERENCES employees (Id),
+            DeadLine DateTime2,
+            DoneTime DateTime2
+
+)
+
+--drop table employees
+
+insert into  employees (Name, Position) values ('hwlllw', 'nachalnik')
+

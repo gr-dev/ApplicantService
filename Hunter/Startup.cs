@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Bll;
+using Hunter.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -33,6 +35,8 @@ namespace Hunter
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
             });
+            services.AddTransient<ApplicationContext> (x => new MyApplicationContext(this.Configuration.GetConnectionString("DefaultConnection")));
+
 
         }
 

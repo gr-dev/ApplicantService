@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 
-namespace Hunter.Models
+namespace Data.Models
 {
     public class Interview
     {

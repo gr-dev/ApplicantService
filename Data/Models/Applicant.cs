@@ -3,23 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Hunter.Models
+namespace Data.Models
 {
     /// <summary>
-    /// сотрудник
+    /// Соискатель
     /// </summary>
-    public class Employe
+    public class Applicant
     {
         public int Id { get; set; }
         /// <summary>
         /// ФИО
         /// </summary>
         public string Name { get; set; }
-        /// <summary>
-        /// должность
-        /// </summary>
-        public string Position { get; set; }
 
+        /// <summary>
+        /// Телефон
+        /// </summary>
         
+        public string Phone { get; set; }
     }
 }
