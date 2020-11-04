@@ -18,6 +18,7 @@ namespace Bll
         public abstract Applicant UpdateApplicant(Applicant applicant);
         public abstract Interview AddInterview(Interview interview);
         public abstract List<Interview> GetInterviews();
+        public abstract Interview GetInterview(int id);
         public abstract List<Employe> Getemployees();
         public abstract Interview UpdateInterview(Interview interview);
         //public abstract Interview RateInterview(int interviewId, Rating rating);  

@@ -20,10 +20,10 @@ namespace Hunter.Controllers
         IConfiguration Configuration;
         ApplicantServiceHelper ApplicantServiceHelper;
         ILogger logger;
-        public ApplicantController(IConfiguration configuration, ApplicationContext context, ILogger<ApplicantController> logger) 
+        public ApplicantController(IConfiguration configuration, ApplicationContext context, ILogger<ApplicantController> logger, Notifier notifier) 
         {
             this.Configuration = configuration;
-            ApplicantServiceHelper = new ApplicantServiceHelper(context);
+            ApplicantServiceHelper = new ApplicantServiceHelper(context, notifier);
             this.logger = logger;
         }
 
@@ -134,6 +134,27 @@ namespace Hunter.Controllers
             {
                 var result = ApplicantServiceHelper.UploadWork(doneWork.Exersice, doneWork.InterviewId);
                 return Ok();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("GetGlobalResult")]
+        public ActionResult GetCurrentResults(DateTime dateStart, DateTime datend)
+        {
+            throw new NotImplementedException();
+        }
+
+        [HttpGet("GetInterviews")]
+        public ActionResult GetInterviews(DateTime dateStart, DateTime datend)
+        {
+            try
+            {
+                var result = ApplicantServiceHelper.GetInterviews();
+                return Ok(result);
             }
             catch (Exception e)
             {

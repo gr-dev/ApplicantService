@@ -149,6 +149,42 @@ namespace Bll
             return result;
         }
 
+        public override Interview GetInterview(int id)
+        {
+            Interview result = null;
+            var query = $"select * from interviews where id = {id}";
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+
+                        while (reader.Read())
+                        {
+                            result = new Interview()
+                            {
+                                Id = reader.GetInt32(0),
+                                DeadLine = reader.GetDateTime(9),
+                                ExamenotorId = reader.GetInt32(3),
+                                Exercise = reader.GetString(7),
+                                InterviewerId = reader.GetInt32(8),
+                                PositionFor = reader.GetString(6),
+                                Received = reader.GetDateTime(2),
+                                Rating = (Rating)reader.GetInt32(5),
+                                ExecutorId = reader.GetInt32(1),
+                                Status = (InterviewStatus)reader.GetInt32(4),
+                                DoneTime = reader.GetDateTime(10)
+                            };
+                        }
+                    }
+                }
+
+            }
+            return result;
+        }
+
         public override List<Interview> GetInterviews()
         {
             var result = new List<Interview>();
@@ -156,9 +192,6 @@ namespace Bll
             using (SqlConnection connection = new SqlConnection(ConnectionString))
             {
                 connection.Open();
-                //SqlCommand command = new SqlCommand(queryString, connection);
-                //command.Connection.Open();
-                // command.ExecuteNonQuery();
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     using (SqlDataReader reader = command.ExecuteReader())
@@ -168,9 +201,18 @@ namespace Bll
                         {
                             result.Add(new Interview()
                             {
-                                Id = reader.GetInt32(0)
+                                Id = reader.GetInt32(0), 
+                                DeadLine = reader.GetDateTime(9),
+                                 ExamenotorId = reader.GetInt32(3),
+                                 Exercise = reader.GetString(7),
+                                 InterviewerId = reader.GetInt32(8),
+                                 PositionFor = reader.GetString(6),
+                                 Received = reader.GetDateTime(2),
+                                  Rating = (Rating)reader.GetInt32(5),
+                                  ExecutorId = reader.GetInt32(1),
+                                  Status = (InterviewStatus)reader.GetInt32(4),
+                                  DoneTime = reader.GetDateTime(10)
                             });
-                            Console.WriteLine($"запись {reader.GetInt32(0)} значение");
                         }
                     }
                 }

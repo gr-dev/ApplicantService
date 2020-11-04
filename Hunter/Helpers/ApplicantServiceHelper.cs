@@ -10,9 +10,11 @@ namespace Hunter.Helpers
     public class ApplicantServiceHelper
     {
         ApplicationContext ApplicationContext;
-        public ApplicantServiceHelper(ApplicationContext applicationContext)
+        Notifier Notifier;
+        public ApplicantServiceHelper(ApplicationContext applicationContext, Notifier notifier)
         {
             this.ApplicationContext = applicationContext;
+            this.Notifier = notifier;
         }
 
         public List<Applicant> GetApplicants()
@@ -23,12 +25,23 @@ namespace Hunter.Helpers
 
         public Interview UploadWork(string exersize, int interviewId )
         {
-            throw new NotImplementedException();
+            var result = ApplicationContext.GetInterview(interviewId);
+            //какие-то действия с зааднием
+            result.DoneTime = DateTime.Now;
+            ApplicationContext.UpdateInterview(result);
+            Notifier.NotifyUserAsync( new ConcreteMessage($"загружено решение {interviewId}",  "новое решение") , result.ExamenotorId);
+            return result;
         }
 
         public List<Interview> GetInterviews()
         {
             var result = ApplicationContext.GetInterviews();
+            return result;
+        }
+        public List<Interview> GetInterviews(DateTime startDate, DateTime endDate)
+        {
+            var result = ApplicationContext.GetInterviews();
+            result = result.Where(x => x.Received.Date >= startDate & x.Received <= endDate).ToList();
             return result;
         }
 
@@ -40,10 +53,12 @@ namespace Hunter.Helpers
         public Interview AddInterview(Interview interview)
         {
             var result = ApplicationContext.AddInterview(interview);
+
             return result;
         }
         public Interview RateInterview(int interviewId, int rating )
         {
+
             Rating ratingEnum;
             switch (rating)
             {
@@ -64,8 +79,12 @@ namespace Hunter.Helpers
                     //ratingEnum = Rating.хорошо;
                     //break;
             }
-            var interview = new Interview() { Rating = ratingEnum, Id = interviewId };
+            var interview = ApplicationContext.GetInterview(interviewId);
+            interview.Rating = (Rating)rating;
+            
             var result = ApplicationContext.UpdateInterview(interview);
+            //Тут может быть уведомление тем, кто заинтересован в этом событии. нужна доп сущность подписчиков
+            ///Notifier.NotifyUserAsync($"оценено резюме {interviewId}", userId );
             return result;
         }
     }

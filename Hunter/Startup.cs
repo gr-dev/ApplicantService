@@ -36,8 +36,7 @@ namespace Hunter
                 c.IncludeXmlComments(xmlPath);
             });
             services.AddTransient<ApplicationContext> (x => new MyApplicationContext(this.Configuration.GetConnectionString("DefaultConnection")));
-
-
+            services.AddTransient<Notifier, MailNotifier>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
