@@ -7,11 +7,6 @@ using System.Threading.Tasks;
 
 namespace Bll
 {
-   public interface INotify
-    {
-        public Task NotifyAsync(User user, string message);
-    }
-
     public class MailNotifier : INotify
     {
         string Parameter { get; set; }
@@ -23,7 +18,6 @@ namespace Bll
         public async Task NotifyAsync(User user, string message)
         {
             await Task.Factory.StartNew(() => Console.WriteLine($"сообщение '{message}' отправлено пользоватлю {user.Name} через {this.Parameter}"));
-
         }
     }
 }

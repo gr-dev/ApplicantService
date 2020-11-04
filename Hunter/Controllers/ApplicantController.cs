@@ -179,19 +179,28 @@ namespace Hunter.Controllers
             }
         }
 
-        [HttpGet("GetGlobalResult")]
-        public ActionResult GetCurrentResults(DateTime dateStart, DateTime datend)
-        {
-            throw new NotImplementedException();
-        }
-
+        /// <summary>
+        /// получить отчет по соискателям
+        /// </summary>
+        /// <param name="dateStart"></param>
+        /// <param name="datend"></param>
+        /// <returns></returns>
         [HttpGet("GetInterviews")]
         public ActionResult GetInterviews(DateTime dateStart, DateTime datend)
         {
             try
             {
-                var result = ApplicantServiceHelper.GetInterviews();
-                return Ok(result);
+                //Можно тоже через DI кидать
+                var rater = new ConcreteInterviewRater();
+                var interviews = ApplicantServiceHelper.GetInterviews();
+                interviews = interviews.Where(x => x.Received >= dateStart & x.Received <= datend).ToList();
+                var result = interviews.Select(x => new RateModel(rater, x)).ToList();
+                return Ok(result.Select(x => new {
+                    InterviewId = x.Interview.Id,
+                    Status = x.Interview.Status,
+                    Rating = x.Rating
+
+                }).ToList());
             }
             catch (Exception e)
             {

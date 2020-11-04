@@ -14,6 +14,8 @@ namespace Data.Models
         /// </summary>
         public int ExecutorId { get; set; }
 
+        public virtual Applicant Applicant { get; set; }
+
         /// <summary>
         /// Выдано (получено соискателем)
         /// </summary>
