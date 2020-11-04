@@ -5,21 +5,17 @@ using System.Threading.Tasks;
 
 namespace Data.Models
 {
+
     /// <summary>
     /// Соискатель
     /// </summary>
-    public class Applicant
+    public class Applicant : User
     {
-        public int Id { get; set; }
-        /// <summary>
-        /// ФИО
-        /// </summary>
-        public string Name { get; set; }
-
         /// <summary>
         /// Телефон
         /// </summary>
         
         public string Phone { get; set; }
+        public virtual List<Interview> Interviews { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Data.Models;
+using System;
 using System.Collections.Generic;
 using System.Net.Mail;
 using System.Text;
@@ -6,32 +7,23 @@ using System.Threading.Tasks;
 
 namespace Bll
 {
-   public abstract class Notifier
+   public interface INotify
     {
-        public abstract Task NotifyUserAsync(Message message, int userId);
+        public Task NotifyAsync(User user, string message);
     }
 
-
-    public abstract class Message
+    public class MailNotifier : INotify
     {
-        public  string Title { get; set; }
-        public  string Body { get; set; }
-    }
+        string Parameter { get; set; }
 
-    public class ConcreteMessage :Message
-    {
-        public ConcreteMessage(string title, string body)
+        public MailNotifier(string server)
         {
-            this.Title = "Заголовко: " + title;
-            this.Body = "тело: " + body;
+            this.Parameter = server;
         }
-    }
-
-    public class MailNotifier : Notifier
-    {
-        public async override Task NotifyUserAsync(Message message, int userId)
+        public async Task NotifyAsync(User user, string message)
         {
-            await Task.Factory.StartNew(() => Console.WriteLine($"сообщение {message.Title} отправлено пользоватлю {userId}"));
+            await Task.Factory.StartNew(() => Console.WriteLine($"сообщение '{message}' отправлено пользоватлю {user.Name} через {this.Parameter}"));
+
         }
     }
 }

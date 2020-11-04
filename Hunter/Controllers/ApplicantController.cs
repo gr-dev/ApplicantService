@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Hunter.Controllers
 {
+
     [Route("api/[controller]")]
     [ApiController]
     public class ApplicantController : ControllerBase
@@ -20,26 +21,31 @@ namespace Hunter.Controllers
         IConfiguration Configuration;
         ApplicantServiceHelper ApplicantServiceHelper;
         ILogger logger;
-        public ApplicantController(IConfiguration configuration, ApplicationContext context, ILogger<ApplicantController> logger, Notifier notifier) 
+        public ApplicantController(IConfiguration configuration, ApplicationContext context, ILogger<ApplicantController> logger, INotify notifier) 
         {
             this.Configuration = configuration;
             ApplicantServiceHelper = new ApplicantServiceHelper(context, notifier);
             this.logger = logger;
         }
 
+        /// <summary>
+        /// информация о соискателе, включая резюме
+        /// </summary>
+        /// <param name="applicantId"></param>
+        /// <returns></returns>
         [HttpGet("GetApplicantInfo")]
         public ActionResult GetApplicantInfo(int applicantId)
         {
             try
             {
-                var applicants = ApplicantServiceHelper.GetApplicants();
-                var result = applicants.FirstOrDefault(x => x.Id == applicantId);
+                var result = ApplicantServiceHelper.GetApplicant(applicantId);
                 if (result != null)
                 {
                     return Ok(result);
                 }
                 else
                 {
+                    logger.LogWarning($"соискатель не найден{applicantId}");
                     return NotFound("соискатель не найден");
                 }
             }
@@ -51,6 +57,10 @@ namespace Hunter.Controllers
 
         }
 
+        /// <summary>
+        /// Список соискателей
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("GetApplicants")]
         public ActionResult GetApplicants()
         {
@@ -65,6 +75,12 @@ namespace Hunter.Controllers
             }
 
         }
+
+        /// <summary>
+        /// Добавить соискателя
+        /// </summary>
+        /// <param name="applicant"></param>
+        /// <returns></returns>
         [HttpPost("AddApplicant")]
         public ActionResult AddApplicant(Applicant applicant)
         {
@@ -80,6 +96,11 @@ namespace Hunter.Controllers
             }
         }
 
+        /// <summary>
+        /// добавить соискателя
+        /// </summary>
+        /// <param name="interview"></param>
+        /// <returns></returns>
         [HttpPost("AddInterview")]
         public ActionResult AddInterview(Interview interview)
         {
@@ -96,6 +117,11 @@ namespace Hunter.Controllers
             }
         }
 
+        /// <summary>
+        /// Полная модель соискателя и интервью
+        /// </summary>
+        /// <param name="fullApplicantModel"></param>
+        /// <returns></returns>
         [HttpPost("AddApplicantWithInterview")]
         public ActionResult AddApplicantWithInterview(FullApplicantModel fullApplicantModel)
         {
@@ -112,6 +138,11 @@ namespace Hunter.Controllers
             }
         }
 
+        /// <summary>
+        /// оценить задание
+        /// </summary>
+        /// <param name="ratingmodel"></param>
+        /// <returns></returns>
         [HttpPost("RateInterview")]
         public ActionResult RateIncident(RateInterviewModel ratingmodel)
         {
@@ -127,6 +158,12 @@ namespace Hunter.Controllers
             }
         }
 
+
+        /// <summary>
+        /// загрузить выполненное задание
+        /// </summary>
+        /// <param name="doneWork"></param>
+        /// <returns></returns>
         [HttpPost("UploadWork")]
         public ActionResult SendWork(DoneWork doneWork)
         {

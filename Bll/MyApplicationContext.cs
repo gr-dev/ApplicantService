@@ -60,24 +60,16 @@ namespace Bll
                 {
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
-                        if (reader.IsDBNull(0))
-                        {
-                            return null;
-                        }
-                        else
-                        {
-                            Applicant result = new Applicant();
+                        Applicant result = new Applicant();
 
-                            while (reader.Read())
-                            {
-                                result.Id = reader.GetInt32(0);
-                                result.Name = reader.GetString(1);
-                                result.Phone = reader.GetString(2);
-                                Console.WriteLine("{0} {1} {2}", reader.GetInt32(0), reader.GetString(1), reader.GetString(2));
-                            }
-                            return result;
-
+                        while (reader.Read())
+                        {
+                            result.Id = reader.GetInt32(0);
+                            result.Name = reader.GetString(1);
+                            result.Phone = reader.GetString(2);
+                            Console.WriteLine("{0} {1} {2}", reader.GetInt32(0), reader.GetString(1), reader.GetString(2));
                         }
+                        return result;
 
                     }
                 }
@@ -117,6 +109,34 @@ namespace Bll
             return result;
         }
 
+        public override Employe GetEmploye(int id)
+        {
+            Employe result = null;
+            var query = $"select * from employees where id = {id}";
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+
+                        while (reader.Read())
+                        {
+                            result = new Employe()
+                            {
+                                Id = reader.GetInt32(0),
+                                Name = reader.GetString(1),
+                                Position = reader.GetString(2)
+                            };
+                            Console.WriteLine($"запись {reader.GetInt32(0)} значение");
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+
         public override List<Employe> Getemployees()
         {
             var result = new List<Employe>();
@@ -124,9 +144,6 @@ namespace Bll
             using (SqlConnection connection = new SqlConnection(ConnectionString))
             {
                 connection.Open();
-                //SqlCommand command = new SqlCommand(queryString, connection);
-                //command.Connection.Open();
-                // command.ExecuteNonQuery();
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     using (SqlDataReader reader = command.ExecuteReader())
@@ -144,7 +161,6 @@ namespace Bll
                         }
                     }
                 }
-
             }
             return result;
         }

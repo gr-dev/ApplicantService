@@ -2,6 +2,7 @@
 using Data.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,8 +11,8 @@ namespace Hunter.Helpers
     public class ApplicantServiceHelper
     {
         ApplicationContext ApplicationContext;
-        Notifier Notifier;
-        public ApplicantServiceHelper(ApplicationContext applicationContext, Notifier notifier)
+        INotify Notifier;
+        public ApplicantServiceHelper(ApplicationContext applicationContext, INotify notifier)
         {
             this.ApplicationContext = applicationContext;
             this.Notifier = notifier;
@@ -23,14 +24,17 @@ namespace Hunter.Helpers
             return result;
         }
 
-        public Interview UploadWork(string exersize, int interviewId )
+        public Interview UploadWork(string result, int interviewId )
         {
-            var result = ApplicationContext.GetInterview(interviewId);
-            //какие-то действия с зааднием
-            result.DoneTime = DateTime.Now;
-            ApplicationContext.UpdateInterview(result);
-            Notifier.NotifyUserAsync( new ConcreteMessage($"загружено решение {interviewId}",  "новое решение") , result.ExamenotorId);
-            return result;
+            var interview = ApplicationContext.GetInterview(interviewId);
+            interview.DoneTime = DateTime.Now;
+            //{результат куда-то записывается}
+            ApplicationContext.UpdateInterview(interview);
+            var examenator = ApplicationContext.GetEmploye(interview.ExecutorId);
+            var cadrovic = ApplicationContext.GetEmploye(interview.InterviewerId);
+            Notifier.NotifyAsync(examenator, $"для интервью {interviewId} загружено выполненное задание");
+            Notifier.NotifyAsync(cadrovic, $"для интервью {interviewId} загружено выполненное задание");
+            return interview;
         }
 
         public List<Interview> GetInterviews()
@@ -38,6 +42,14 @@ namespace Hunter.Helpers
             var result = ApplicationContext.GetInterviews();
             return result;
         }
+
+        public Applicant GetApplicant(int applicantId)
+        {
+            var applicant = ApplicationContext.GetApplicant(applicantId);
+            applicant.Interviews = ApplicationContext.GetInterviews().Where(x => x.ExecutorId == applicant.Id).ToList();
+            return applicant;
+        }
+
         public List<Interview> GetInterviews(DateTime startDate, DateTime endDate)
         {
             var result = ApplicationContext.GetInterviews();
@@ -52,14 +64,15 @@ namespace Hunter.Helpers
         }
         public Interview AddInterview(Interview interview)
         {
-            var result = ApplicationContext.AddInterview(interview);
-
-            return result;
+            interview = ApplicationContext.AddInterview(interview);
+            var employe = ApplicationContext.GetEmploye(interview.ExamenotorId);
+            Notifier.NotifyAsync(employe, $"у вас новый кандидат  {interview.Id}");
+            return interview;
         }
         public Interview RateInterview(int interviewId, int rating )
         {
 
-            Rating ratingEnum;
+            Rating ratingEnum = (Rating)rating;
             switch (rating)
             {
                 case (0):
@@ -75,16 +88,13 @@ namespace Hunter.Helpers
                     ratingEnum = Rating.отлично;
                     break;
                 default:
-                    throw new Exception("чет оценочка не реализована");
-                    //ratingEnum = Rating.хорошо;
-                    //break;
+                    throw new Exception("чет оценочка неккоректная");
             }
             var interview = ApplicationContext.GetInterview(interviewId);
             interview.Rating = (Rating)rating;
             
             var result = ApplicationContext.UpdateInterview(interview);
-            //Тут может быть уведомление тем, кто заинтересован в этом событии. нужна доп сущность подписчиков
-            ///Notifier.NotifyUserAsync($"оценено резюме {interviewId}", userId );
+            Notifier.NotifyAsync(ApplicationContext.GetApplicant(interview.ExecutorId), $"Ваше задание по интервью {interviewId} оценили на {rating}");
             return result;
         }
     }

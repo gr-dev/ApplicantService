@@ -8,13 +8,9 @@ namespace Data.Models
     /// <summary>
     /// сотрудник
     /// </summary>
-    public class Employe
+    public class Employe :User
     {
-        public int Id { get; set; }
-        /// <summary>
-        /// ФИО
-        /// </summary>
-        public string Name { get; set; }
+
         /// <summary>
         /// должность
         /// </summary>
