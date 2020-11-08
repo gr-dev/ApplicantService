@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 namespace Hunter.Controllers
 {
 
+    //TODO: тут какая-то авторизация, роли
     [Route("api/[controller]")]
     [ApiController]
     public class ApplicantController : ControllerBase

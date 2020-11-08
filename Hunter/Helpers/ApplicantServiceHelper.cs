@@ -24,6 +24,12 @@ namespace Hunter.Helpers
             return result;
         }
 
+        /// <summary>
+        /// загрузить результат выполнения задания
+        /// </summary>
+        /// <param name="result"></param>
+        /// <param name="interviewId"></param>
+        /// <returns></returns>
         public Interview UploadWork(string result, int interviewId )
         {
             var interview = ApplicationContext.GetInterview(interviewId);
